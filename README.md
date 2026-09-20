@@ -186,7 +186,7 @@ See [verification results and manual checklist](docs/testing.md). Browser review
 
 ESLint 9.39.5 is retained because the installed accessibility plugin declares support through ESLint 9. The package registry marks this ESLint major deprecated; review a compatible upgrade when `eslint-plugin-jsx-a11y` supports ESLint 10. This is a development-tool maintenance limitation, not a runtime dependency.
 
-## University rubric
+## Rubric
 
 | Category                          | Project evidence                                                                                       |
 | --------------------------------- | ------------------------------------------------------------------------------------------------------ |
@@ -194,17 +194,6 @@ ESLint 9.39.5 is retained because the installed accessibility plugin declares su
 | UI/UX & responsiveness — 30%      | Cohesive visual system, local imagery, mobile/desktop layouts, keyboard and motion considerations      |
 | Feature completeness — 20%        | Full cart lifecycle, filtering, correct totals, bounds, empty states, image fallback                   |
 | Documentation & Git hygiene — 15% | Setup guide, architecture notes, screenshots, image credits, lockfile, CI and focused commit structure |
-
-## Viva guide
-
-1. **What are props?** `FoodCard` receives a food record, quantity, and callback from its parent.
-2. **Why use state?** Changing a category or cart quantity triggers a new render of the relevant UI.
-3. **Why a reducer?** It collects cart-update rules, including clearing after confirmation, in one pure, testable function.
-4. **Why stable keys?** A food ID preserves the right component identity when filtering or removing rows.
-5. **Why derive totals?** The total always follows the current menu prices and quantities without extra synchronization.
-6. **How does filtering work?** JavaScript `filter` selects records whose category matches the selected button.
-7. **How is the design responsive?** CSS media queries change grid columns and the cart layout.
-8. **What makes controls accessible?** Native elements, clear names, visible focus, keyboard operation, and intentional focus recovery.
 
 ## Scope and limitations
 
