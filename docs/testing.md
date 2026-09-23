@@ -1,105 +1,68 @@
 # Verification record
 
-Verified locally on 20 September 2026 using Windows, Node 24.19.0 and pnpm 11.25.0.
+Verified on 23 September 2026 on Windows with Node 24.19.0 and pnpm 11.25.0.
 
 ## Automated checks
 
-| Check                                           | Result                                    |
-| ----------------------------------------------- | ----------------------------------------- |
-| `pnpm lint`                                     | Passed with zero errors and zero warnings |
-| `pnpm test:run`                                 | 38 tests passed across 4 files            |
-| `pnpm build`                                    | Passed; 49 modules transformed            |
-| Clean source copy: frozen-lockfile install      | Passed, using the existing package cache  |
-| Initial baseline clean copy: lint, tests, build | All passed; 29 tests                      |
+| Command | Result |
+| --- | --- |
+| `pnpm test:run` | 52 tests passed across 5 files |
+| `pnpm lint` | No errors or warnings |
+| `pnpm build` | Passed; output in `dist/` |
 
-The clean copy contained only source files and declared package/configuration files, not the original node_modules. This verifies that the project does not depend on the temporary formatting tool or other workspace tools. It is not a test of an empty network cache or a different operating system.
+Coverage includes:
+- 36 unique dishes, exactly four per category, all nine reference category names, valid dietary labels, integer-paise pricing and four Popular Picks drawn from the same menu records.
+- Immutable reducer updates, removal at quantity one, clear, invalid IDs/actions, maximum quantity 99, and exact INR totals.
+- Synchronization between menu cards, Popular Picks and the drawer, with no duplicate heading IDs.
+- Keyboard focus recovery after removing the last unit from either a card or the drawer.
+- Category filtering without losing cart state, drawer dismissal, restored focus and scrolling.
+- Empty cart, maximum quantities, missing-image fallback and fresh-mount reset.
+- Combined All/Veg/Non-veg and category filters, keyboard radio navigation, empty-filter recovery and unchanged cart contents.
+- Checkout validation, keyboard confirmation, cancellation, duplicate-submit prevention, receipt snapshot and cleared cart.
 
-Test coverage by behavior:
+## Production browser checks
 
-- Menu: unique IDs, required fields, valid categories, positive integer prices, all/category filtering, empty results.
-- Cart: first and repeated addition, immutable updates, increment/decrement, explicit removal, absent IDs, unsupported actions, prototype-property IDs, and 99-item limits.
-- Totals: zero, mixed items, changes/removal, paise fractions, Indian number grouping, maximum-size cart.
-- Interface: full ordering flow, category changes preserving the cart, keyboard filtering, skip navigation, drawer opening/dismissal and focus/scroll restoration, focus recovery after removal, and reset on a fresh mount.
-- Edges: disabled upper/lower quantity controls, no-results message, one-time image fallback, decorative alternative text.
+Used the in-app Chromium browser with `pnpm preview --port 4173 --strictPort`.
 
-## Browser verification
+- All nine category buttons produced four menu cards each. Popular Picks stayed available while filtering.
+- Added Classic Cheeseburger through Popular Picks, increased it from the menu, and verified two units and **₹398.00** in the drawer.
+- Decreased the drawer quantity twice; the last unit disappeared, total became **₹0.00**, Place Order was disabled and focus moved to the cart heading.
+- Added the burger again and removed it using the menu minus button. Both menu and Popular Picks returned to Add; focus stayed on the resulting Add button.
+- Desktop: selected Indian, added Chicken Biryani, submitted an empty checkout to see validation, then confirmed a name/table. Success showed a generated CB- order ID and **₹319.00**; reopening the drawer showed an empty cart.
+- Mobile: added and increased Flame-Grilled Tandoori Platter through the menu, opened the mobile cart shortcut and confirmed two units for **₹1,098.00**. Checkout and success worked at 320 px; returning to the menu and reopening showed an empty cart.
+- Reviewed dietary markers, dish photography and the Chennai footer.
+- No console warnings or errors were captured. No broken image elements were observed in the inspected views. All 24 new image files were also decoded successfully during optimization.
 
-Tested in the Codex in-app Chromium browser, including the production site served by `pnpm preview` at `http://127.0.0.1:4173/`.
+## Responsive review
 
-- Confirmed two Classic Margheritas plus one Fresh Lemonade show **₹577.00** in the production cart.
-- Confirmed filtering to Drinks hides pizza cards while retaining pizza in the cart.
-- Confirmed removing lemonade returns the total to ₹498.00 and focuses the remaining Remove button.
-- Confirmed the mobile shortcut opens the separate modal cart and focuses Close cart. Escape restores focus to the opener and unlocks background scrolling.
-- Confirmed backdrop dismissal, native modal background inertness, and keyboard navigation within the drawer. Chromium may momentarily focus browser chrome when tabbing past an endpoint; background page controls remain inert.
-- Confirmed mobile quantity controls update the total visibly.
-- All 13 original photo elements and two sample-cart thumbnails loaded successfully in the production page.
-- No warning/error console messages were captured during the reviewed flows.
+| Viewport | Result |
+| --- | --- |
+| 320 px | No horizontal page or drawer overflow; checkout and success usable |
+| 375 px | Single-column menu, wrapping categories, horizontally scrollable Popular Picks, full-width drawer |
+| 768 px | Two menu columns; no page overflow |
+| 1280 px | Three menu columns, four Popular Picks columns and four footer columns; no page overflow |
 
-### Layout checks
+Screenshots in `docs/screenshots/` show the current desktop homepage/menu and mobile menu/cart.
 
-| Viewport width | Expected cards per row | Cart layout             |
-| -------------- | ---------------------- | ----------------------- |
-| 320 px         | 1                      | Full-width modal drawer |
-| 375 px         | 1                      | Full-width modal drawer |
-| 640 px         | 2                      | Full-width modal drawer |
-| 768 px         | 2                      | Full-width modal drawer |
-| 1024 px        | 3                      | Right-hand modal drawer |
-| 1280 px        | 3                      | Right-hand modal drawer |
-| 1440 px        | 3                      | Right-hand modal drawer |
+Native buttons, accessible names, visible keyboard focus, dietary shape/text alternatives and existing reduced-motion CSS are retained. Automated tests and manual checks do not constitute screen-reader or cross-browser certification. Safari, Firefox, physical touch hardware, actual 200% browser zoom and live reduced-motion emulation were not tested in this pass.
 
-Viewport overrides were used for responsive testing. Horizontal overflow is checked against document client width, accounting for the browser scrollbar. A 320 px overflow caused by a minimum body width was found and fixed. Narrow-screen menu headings were also adjusted to keep the count readable.
+## Assets and dependencies
 
-Screenshots are stored in `docs/screenshots/`. The mobile captures intentionally show the focused menu/cart workflows rather than attempting to compress the entire long mobile page into one image.
+- 37 local WebP photographs (36 dishes plus hero), totalling 2,663,434 bytes.
+- New photographs are resized to 720 pixels wide; original downloaded JPEGs are excluded from the application.
+- Build: JavaScript approximately 253 KB (79 KB gzip); CSS approximately 19 KB (4.8 KB gzip).
+- No dependencies were added. No external image/API/font requests are needed at runtime.
+- Image sources are recorded in [image-credits.md](image-credits.md).
 
-### Accessibility review
+## Reproduce
 
-- JSX accessibility lint passed.
-- Semantic landmarks, heading levels, button names, category pressed states, and the cart status region were inspected in the browser's DOM snapshot.
-- Keyboard filtering/navigation and removal-focus behavior passed the automated interaction tests; removal focus was also confirmed in the browser.
-- Visible focus rings and usable touch controls were inspected on narrow screens.
-- Calculated text contrast ratios: body 12.29:1, muted text 5.32:1, primary button 5.94:1, selected category 8.33:1, hero note 4.83:1, cart note 5.44:1.
-- The reduced-motion media query was reviewed in source and disables transitions, animations, and smooth scrolling.
+1. Run `pnpm test:run`, `pnpm lint`, `pnpm build`, then `pnpm preview`.
+2. Visit each category and confirm four dishes. Switch to All dishes and confirm 36.
+3. Add a Popular Pick; increase it from its main menu card and check the drawer total.
+4. Decrease to one, then press minus again. Confirm removal, an updated total and sensible focus. Repeat from a menu card.
+5. Add another dish, open Place Order and submit empty fields. Enter a name and table number, confirm, check the receipt, then return to the menu and verify the cart is empty.
+6. Repeat at desktop, tablet and mobile widths; check wrapped filters, reachable controls, footer and no page overflow.
+7. Use Tab/Shift+Tab/Enter to navigate; Escape should close the drawer.
+8. Refresh: the cart resets by design.
 
-**Not verified:** spoken output with a real screen reader, physical touch hardware, Safari/Firefox, actual 200% browser zoom, and the reduced-motion setting in a live browser. The connected browser did not change zoom when the zoom keyboard shortcut was sent. Responsive viewport tests verify reflow but are not claimed as an actual browser-zoom test.
-
-## Asset and build sizes
-
-- 13 WebP photographs total **898,776 bytes** (about 878 KiB).
-- Hero: about 235 KiB; each menu image is below 120 KiB.
-- Production JavaScript: about 243 KB, 76.3 KB gzip.
-- Production CSS: about 17.3 KB, 4.4 KB gzip.
-- Photos and the application make no external requests at runtime.
-
-## Reproduce the manual checks
-
-1. Run `pnpm build`, then `pnpm preview`, and open the printed URL.
-2. Add Classic Margherita twice, select Drinks, and add Fresh Lemonade. Open Your cart. Expect 3 items and ₹577.00.
-3. Decrease the pizza quantity. Expect ₹328.00 and a disabled minus button at quantity 1.
-4. Increase it again, remove the lemonade, then remove the pizza. Expect ₹498.00, then an empty cart and ₹0.00.
-5. Use only Tab, Shift+Tab, Enter and Space to navigate filters and buttons. Verify focus remains visible and meaningful after removing a row.
-6. Close and reopen the drawer; verify preserved contents, Escape/backdrop dismissal, restored focus and page scrolling. Try the widths in the table. Confirm wrapping filters, column counts, no page overflow, and the mobile shortcut.
-7. In a browser with these controls, additionally check 200% zoom and an emulated reduced-motion preference.
-8. Test with a screen reader if available; announcements should be concise and controls named for the dish.
-9. Refresh the page. The cart should reset by design.
-
-## CI and repository limitations
-
-GitHub Actions is configured but has not run on GitHub: no remote was supplied or published. Its install/lint/test/build commands have passed locally.
-
-The repository was initialized on `main` and the initial tooling commit was created. Later Git writes are blocked by Windows sandbox deny rules on `.git/index.lock`, even after filesystem permission grants. Application files remain intact. The task's `outputs/finish-git.ps1` provides scoped, meaningful commits to run from a normal PowerShell terminal outside that sandbox. This is a tooling limitation, not a failure of the application checks.
-
-ESLint 9 is compatible with the installed JSX accessibility plugin but deprecated by the registry; a future compatible tooling update is recommended. This does not affect the browser bundle.
-
-## Drawer revision
-
-The cart reducer, menu data and dependencies are unchanged. Footer branding now reads Campus Bites. The Vitest include pattern is restricted to src tests so temporary verification copies are not collected. jsdom mocks only dialog open/close; native modality and Escape were checked in the real browser. The clean-copy result above refers to the initial implementation; current drawer changes passed the main workspace checks.
-
-No custom cursor or stuck top-left marker was found in source or reproduced in the inspected browser. The orange utensils mark belongs to the existing brand logo.
-
-## Demo checkout revision
-
-- Added five integration tests for empty-cart gating, required/invalid fields, keyboard confirmation with a mixed ₹577 receipt, cancellation/back navigation, and repeated-submit prevention. Added a reducer test for clearing the cart. All 38 tests across four files, lint and production build passed after the final code changes.
-- Verified Menu → Add item → Cart → Place Order → Fill form → Confirm Order → Success → Back to menu → empty cart in the production browser at desktop (1440 px) and mobile (375 px) sizes. The receipt displayed ₹249.00 and a generated CB- reference; reopening the cart displayed ₹0.00 with Place Order disabled.
-- Verified field errors focus the first invalid input and clear when edited, keyboard Tab/Enter confirmation focuses the success heading, and Escape cancels checkout while retaining the cart.
-- Checked the checkout and success panels at 320 px without horizontal drawer overflow. Back to cart restores focus to its heading and preserves the current total.
-- Confirmation is synchronous and local: no network request, payment, storage or restaurant submission occurs. Receipt details are cleared when the drawer closes. The historical clean-copy check above predates checkout.
+Orders remain a local frontend simulation. No customer information is sent or stored. This pass did not deploy or push changes; CI is defined in `.github/workflows/ci.yml`, but no new hosted run is claimed.

@@ -2,19 +2,20 @@ import { useReducer, useState } from 'react'
 import Header from './components/Header.jsx'
 import Hero from './components/Hero.jsx'
 import CategoryFilter from './components/CategoryFilter.jsx'
+import DietFilter from './components/DietFilter.jsx'
 import FoodGrid from './components/FoodGrid.jsx'
 import Cart from './components/Cart.jsx'
 import CartDrawer from './components/CartDrawer.jsx'
 import CartShortcut from './components/CartShortcut.jsx'
 import CheckoutForm from './components/CheckoutForm.jsx'
 import OrderSuccess from './components/OrderSuccess.jsx'
-import Icon from './components/Icon.jsx'
-import { filterMenu, menuById } from './data/menu.js'
+import Footer from './components/Footer.jsx'
+import { filterMenu, menuById, popularFoods } from './data/menu.js'
 import { cartReducer, getCartSummary } from './state/cart.js'
-import { BRAND_NAME } from './config.js'
 
 export default function App() {
   const [selectedCategory, setSelectedCategory] = useState('all')
+  const [selectedDiet, setSelectedDiet] = useState('all')
   const [cart, dispatch] = useReducer(cartReducer, [])
   const [isCartOpen, setCartOpen] = useState(false)
   const [orderStep, setOrderStep] = useState('cart')
@@ -23,7 +24,10 @@ export default function App() {
     id: 0,
     message: 'Made for your cravings. Pick something delicious.',
   })
-  const foods = filterMenu(selectedCategory)
+  const foods = filterMenu(selectedCategory, selectedDiet)
+  const filteredPopularFoods = popularFoods.filter(
+    (food) => selectedDiet === 'all' || food.diet === selectedDiet,
+  )
   const { items, totalItems, totalMinor } = getCartSummary(cart)
 
   function closeCart() {
@@ -50,6 +54,8 @@ export default function App() {
   }
 
   function handleAction(type, foodId) {
+    const removingLast =
+      type === 'decrease' && cart.find((item) => item.foodId === foodId)?.quantity === 1
     dispatch({ type, foodId })
     const messages = {
       add: 'added to your cart',
@@ -59,7 +65,7 @@ export default function App() {
     }
     setNotice((previous) => ({
       id: previous.id + 1,
-      message: `${menuById[foodId].name} ${messages[type]}.`,
+      message: `${menuById[foodId].name} ${messages[removingLast ? 'remove' : type]}.`,
     }))
   }
 
@@ -85,6 +91,21 @@ export default function App() {
       />
       <main className="container">
         <Hero onNavigate={navigateTo} />
+        <section className="popular-section" aria-labelledby="popular">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">A FEW CROWD FAVOURITES</p>
+              <h2 id="popular">Popular Picks</h2>
+            </div>
+            <span className="result-count">Your next favourite starts here</span>
+          </div>
+          <FoodGrid
+            foods={filteredPopularFoods}
+            cart={cart}
+            onAction={handleAction}
+            label="Popular picks"
+          />
+        </section>
         <div className="menu-layout">
           <section className="menu-section" aria-labelledby="menu">
             <div className="section-heading">
@@ -94,27 +115,22 @@ export default function App() {
                   What sounds good?
                 </h2>
               </div>
-              <span className="result-count" aria-live="polite">
-                {foods.length} dishes to love
-              </span>
+              <div className="menu-tools">
+                <DietFilter selectedDiet={selectedDiet} onSelect={setSelectedDiet} />
+                <span className="result-count" aria-live="polite">
+                  {foods.length} {foods.length === 1 ? 'dish' : 'dishes'} to love
+                </span>
+              </div>
             </div>
             <CategoryFilter selectedCategory={selectedCategory} onSelect={setSelectedCategory} />
             <p className="menu-feedback" role="status" aria-label="Cart update" aria-atomic="true">
               <span key={notice.id}>{notice.message}</span>
             </p>
-            <FoodGrid foods={foods} cart={cart} onAdd={(foodId) => handleAction('add', foodId)} />
+            <FoodGrid foods={foods} cart={cart} onAction={handleAction} />
           </section>
         </div>
       </main>
-      <footer className="container site-footer">
-        <p className="footer-note">
-          <Icon name="plate" /> A little break. A great bite.
-        </p>
-        <p>{BRAND_NAME}</p>
-        <a href="#menu" onClick={(event) => navigateTo(event, 'menu')}>
-          Back to the menu ↑
-        </a>
-      </footer>
+      <Footer onNavigate={navigateTo} />
       <CartShortcut
         totalItems={totalItems}
         totalMinor={totalMinor}

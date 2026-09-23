@@ -1,15 +1,18 @@
-import { MAX_QUANTITY } from '../config.js'
+import { useId } from 'react'
 import { categories } from '../data/menu.js'
 import { formatPrice } from '../utils/currency.js'
 import FoodImage from './FoodImage.jsx'
 import Icon from './Icon.jsx'
+import DietIndicator from './DietIndicator.jsx'
+import QuantityControl from './QuantityControl.jsx'
 
-export default function FoodCard({ food, quantity = 0, onAdd }) {
-  const atLimit = quantity >= MAX_QUANTITY
+export default function FoodCard({ food, quantity = 0, onAction }) {
+  const headingId = useId()
   return (
-    <article className="food-card" aria-labelledby={`food-${food.id}`}>
+    <article className="food-card" aria-labelledby={headingId}>
       <div className="food-image-wrap">
         <FoodImage src={food.image} alt={food.imageAlt} />
+        <DietIndicator diet={food.diet} />
         {quantity > 0 && (
           <span className="in-cart-badge">
             <Icon name="check" />
@@ -21,20 +24,17 @@ export default function FoodCard({ food, quantity = 0, onAdd }) {
         <span className="food-category">
           {categories.find((category) => category.id === food.categoryId)?.label}
         </span>
-        <h3 id={`food-${food.id}`}>{food.name}</h3>
+        <h3 id={headingId}>{food.name}</h3>
         <p>{food.description}</p>
         <div className="food-card-bottom">
           <span className="food-price">{formatPrice(food.priceMinor)}</span>
-          <button
-            className="add-button"
-            type="button"
-            aria-label={`Add ${food.name} to cart`}
-            onClick={() => onAdd(food.id)}
-            disabled={atLimit}
-          >
-            <Icon name={atLimit ? 'check' : 'plus'} />
-            {atLimit ? 'Max 99' : 'Add'}
-          </button>
+          <QuantityControl
+            name={food.name}
+            quantity={quantity}
+            allowAdd
+            onIncrease={() => onAction(quantity ? 'increase' : 'add', food.id)}
+            onDecrease={() => onAction('decrease', food.id)}
+          />
         </div>
       </div>
     </article>

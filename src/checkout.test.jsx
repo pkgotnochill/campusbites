@@ -54,7 +54,11 @@ describe('demo order placement', () => {
     const user = userEvent.setup()
     render(<App />)
     await user.click(screen.getByRole('button', { name: 'Add Classic Margherita to cart' }))
-    await user.click(screen.getByRole('button', { name: 'Add Classic Margherita to cart' }))
+    await user.click(
+      screen.getByRole('button', {
+        name: 'Increase Classic Margherita quantity',
+      }),
+    )
     await user.click(screen.getByRole('button', { name: 'Add Fresh Lemonade to cart' }))
     const opener = screen.getByRole('button', { name: 'Your cart, 3 items' })
     await user.click(opener)
@@ -66,7 +70,9 @@ describe('demo order placement', () => {
     await user.tab()
     expect(document.activeElement).toBe(screen.getByRole('textbox', { name: /Customer name/ }))
     await user.keyboard('  Asha Rao  {Tab}12{Tab}{Enter}')
-    const success = screen.getByRole('heading', { name: 'Order placed successfully!' })
+    const success = screen.getByRole('heading', {
+      name: 'Order placed successfully!',
+    })
     expect(document.activeElement).toBe(success)
     expect(screen.getByRole('dialog', { name: 'Order placed successfully!' })).toBeTruthy()
     expect(screen.getByText(/^CB-[A-F0-9]{8}$/)).toBeTruthy()
@@ -91,7 +97,11 @@ describe('demo order placement', () => {
     await startCheckout(user)
     await user.click(screen.getByRole('button', { name: 'Back to cart' }))
     expect(document.activeElement).toBe(screen.getByRole('heading', { name: 'Your cart' }))
-    await user.click(screen.getByRole('button', { name: 'Increase Classic Margherita quantity' }))
+    await user.click(
+      within(screen.getByRole('dialog')).getByRole('button', {
+        name: 'Increase Classic Margherita quantity',
+      }),
+    )
     await user.click(screen.getByRole('button', { name: 'Place Order' }))
     expect(screen.getByLabelText('Order total').textContent).toBe('₹498.00')
     await user.type(screen.getByRole('textbox', { name: /Customer name/ }), 'Draft Name')
@@ -110,6 +120,9 @@ describe('demo order placement', () => {
     await user.type(screen.getByRole('textbox', { name: /Customer name/ }), 'Asha')
     await user.type(screen.getByRole('textbox', { name: /Table number/ }), '1')
     await user.dblClick(screen.getByRole('button', { name: 'Confirm Order' }))
-    expect(onConfirm).toHaveBeenCalledExactlyOnceWith({ customerName: 'Asha', tableNumber: '1' })
+    expect(onConfirm).toHaveBeenCalledExactlyOnceWith({
+      customerName: 'Asha',
+      tableNumber: '1',
+    })
   })
 })

@@ -20,7 +20,8 @@ export function cartReducer(cart, action) {
         item.foodId === action.foodId ? { ...item, quantity: item.quantity + 1 } : item,
       )
     case 'decrease':
-      if (!existing || existing.quantity <= 1) return cart
+      if (!existing) return cart
+      if (existing.quantity === 1) return cart.filter((item) => item.foodId !== action.foodId)
       return cart.map((item) =>
         item.foodId === action.foodId ? { ...item, quantity: item.quantity - 1 } : item,
       )

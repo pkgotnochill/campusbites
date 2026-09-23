@@ -1,6 +1,6 @@
 # Campus Bites
 
-A responsive food ordering interface for a university frontend project. Browse twelve dishes, filter by category, and build a cart with accurate Indian rupee totals.
+A responsive food ordering interface for a university frontend project. Browse 36 dishes, filter by category, and build a cart with accurate Indian rupee totals.
 
 Built with **React + Vite, JavaScript, and plain CSS**. Only React and React DOM are runtime dependencies.
 
@@ -19,12 +19,15 @@ Built with **React + Vite, JavaScript, and plain CSS**. Only React and React DOM
 ## Features
 
 - Restaurant hero banner with locally bundled food photography.
-- Twelve dishes across Pizza, Burgers, Drinks, and Desserts.
+- 36 dishes: four each in Signature, Starters, Burgers, Pizza, Indian, Asian, Main Course, Desserts, and Beverages.
 - Category filtering with selected-state indicators and result counts.
-- Reusable cards with names, descriptions, images, and INR prices.
-- Add, increase, decrease, and remove cart items.
+- All / Veg / Non-veg food preference switch combines with categories and filters Popular Picks without changing the cart.
+- Reusable cards with names, descriptions, local images, INR prices, and vegetarian/non-vegetarian symbols.
+- Four Popular Picks share the same menu records and live cart quantities.
+- Chennai footer with opening hours, counter contact information, and a fictional shop address.
+- Add and change quantities directly on menu cards, Popular Picks, or in the cart drawer.
 - Place a demo order inside the drawer: enter a name and table number, review the INR summary, and confirm to see a reference number and clear the cart.
-- Quantity limits of 1–99; repeated additions update the existing row.
+- Quantity limits of 1–99; minus at one removes the item and keeps keyboard focus usable.
 - Exact totals calculated with integer paise.
 - Empty cart, maximum-quantity, no-results, and failed-image states.
 - Mobile cart shortcut and a separate slide-out cart on every screen size.
@@ -106,11 +109,12 @@ App
 ├── Header
 ├── Hero
 ├── CategoryFilter
-├── FoodGrid → FoodCard → FoodImage
+├── FoodGrid (menu + Popular Picks) → FoodCard → FoodImage + DietIndicator + QuantityControl
 ├── CartDrawer → Cart → CartItem → QuantityControl + FoodImage
 │              → CheckoutForm → OrderSummary
 │              → OrderSuccess → OrderSummary
-└── CartShortcut
+├── CartShortcut
+└── Footer
 ```
 
 `Icon` renders the shared decorative SVG icons. `FoodImage` handles fixed image dimensions and a one-time fallback. The empty state and total belong to `Cart` rather than extra tiny components.
@@ -128,10 +132,12 @@ App
 | `priceMinor`  | `24900`                       | Price in paise: ₹249.00        |
 | `image`       | Imported WebP                 | Bundled image URL              |
 | `imageAlt`    | Description of the photograph | Accessible alternative text    |
+| `diet`        | `veg` or `nonveg`              | Green circle or brown triangle, with a screen-reader label |
+| `popular`     | `true` (optional)              | Includes this record in Popular Picks |
 
-To add a dish: place its image in `src/assets/images/`, import it in `menu.js`, add a record with a unique ID and integer price, and add the source to the image credits. No food-card markup needs to be copied. Adjust the intentional twelve-item/three-per-category dataset checks if the menu size changes.
+To add a dish: place its image in `src/assets/images/`, import it in `menu.js`, add a record with a unique ID and integer price, and add the source to the image credits. No food-card markup needs to be copied. Adjust the intentional 36-item/four-per-category dataset checks if the menu size changes.
 
-`menuById` is derived from the menu. The cart uses it to retrieve product details. `filterMenu` returns all dishes or those matching the selected category; filtering does not change cart state.
+`menuById` and `popularFoods` are derived from the menu. Popular Picks and the full menu reuse the same cards and reducer; each card has a unique React `useId` heading even when the same dish appears twice. The cart uses it to retrieve product details. `filterMenu` returns all dishes or those matching the selected category; filtering does not change cart state.
 
 ### Cart rules
 
@@ -141,7 +147,7 @@ Cart state contains only entries such as `{ foodId: 'pizza-margherita', quantity
 | ---------- | ------------------------------------------------- |
 | `add`      | Add a row at 1, or increase its existing quantity |
 | `increase` | Increase an existing row, up to 99                |
-| `decrease` | Decrease an existing row, down to 1               |
+| `decrease` | Decrease a row; remove it when its quantity is 1               |
 | `remove`   | Remove the row entirely                           |
 
 Unknown menu IDs and unsupported actions leave state unchanged. Quantity controls cannot produce negative, zero, or fractional quantities. The reducer uses new arrays and objects instead of mutating previous state.
@@ -166,7 +172,8 @@ The shared formatter divides by 100 only for display and uses `Intl.NumberFormat
 
 - Below 640 px: single-column cards, stacked hero, wrapping category buttons.
 - From 640 px: two card columns.
-- From 1024 px: three card columns; the mobile shortcut is hidden.
+- From 1024 px: three menu columns and four Popular Picks columns; the mobile shortcut is hidden.
+- Popular Picks uses a horizontal, keyboard-accessible card strip on small screens and two columns on tablets.
 - The cart opens in a native modal dialog: a 460 px right-hand drawer on desktop and full width on narrow screens. Long carts scroll independently.
 - Escape, the backdrop, Close cart, or Continue browsing dismiss the drawer. Opening focuses Close cart; closing returns focus to the opener. Background scrolling is locked while open.
 - Mobile bottom padding includes the device safe area so final content stays reachable above the shortcut.
@@ -178,7 +185,7 @@ The shared formatter divides by 100 only for display and uses `Intl.NumberFormat
 
 ## Testing and CI
 
-The suite contains **38 tests** covering menu integrity, filtering, immutable cart updates, quantity boundaries, repeated additions, exact paise totals, invalid IDs, the ordering flow, focus recovery, drawer dismissal, focus/scroll restoration, navigation, reset-on-remount behavior, image fallback states, checkout validation, cancellation, duplicate-submit prevention, receipt preservation and clearing the cart after confirmation.
+The suite contains **52 tests** covering menu integrity, combined dietary/category filtering, keyboard preference switching, immutable cart updates, quantity boundaries, repeated additions, exact paise totals, invalid IDs, the ordering flow, focus recovery, drawer dismissal, focus/scroll restoration, navigation, reset-on-remount behavior, image fallback states, checkout validation, cancellation, duplicate-submit prevention, receipt preservation and clearing the cart after confirmation.
 
 GitHub Actions is configured to run a frozen-lockfile install, lint, tests, and production build on pushes to `main` and pull requests. The workflow needs a GitHub remote and a push before a hosted run can occur.
 
@@ -196,6 +203,8 @@ ESLint 9.39.5 is retained because the installed accessibility plugin declares su
 | Documentation & Git hygiene — 15% | Setup guide, architecture notes, screenshots, image credits, lockfile, CI and focused commit structure |
 
 ## Scope and limitations
+
+The footer address and opening hours are fictional demo content. Contact points to the counter rather than an invented phone number or active email address.
 
 This is a frontend demonstration. Checkout accepts a name and table number only for a local simulation; these details stay in memory and are discarded when the drawer closes. It does not submit real orders or process payments. The cart resets on refresh; there is no persistence, backend, authentication, live availability, or pricing API. Photographs illustrate the demo menu and are not product claims by a real restaurant.
 

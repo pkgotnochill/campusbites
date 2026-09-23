@@ -1,6 +1,6 @@
 # Image credits
 
-Food photographs are bundled locally for this educational demo. They are illustrative photographs, not photographs of products sold by a real restaurant. Each selected source is a free Unsplash image, not an Unsplash+ image.
+Food photographs are bundled locally for this educational demo. They are illustrative photographs, not photographs of products sold by a real restaurant. The original Campus Bites images below are free Unsplash images, not Unsplash+ images.
 
 Reuse terms: [Unsplash License](https://unsplash.com/license). Sources checked on 20 September 2026. Images were resized, centre-cropped and converted to WebP by the source image service. No attribution claim is made for the app author.
 
@@ -21,3 +21,34 @@ Reuse terms: [Unsplash License](https://unsplash.com/license). Sources checked o
 | `src/assets/images/hero.webp`       | Ivan Torres          | [View photo](https://unsplash.com/photos/MQUqbmszGGM)                                                                              |
 
 The favicon, interface icons, and food placeholder are original SVG artwork created for this project.
+
+## Expanded menu — 23 September 2026
+
+The nine category names, selected dish ideas, and these 24 additional dish images come from the user-supplied [Flame & Fork reference](https://flame-and-fork-ru.netlify.app/). The user requested reuse of their friend's menu. These images were resized to 720 pixels wide and converted to WebP; they are served locally without hotlinking. Original photographers and licenses were not listed on the reference page, so the Unsplash license above does not apply to this group. Source links are recorded below; no ownership claim is made for Campus Bites.
+
+| Local file | Dish | Source |
+| --- | --- | --- |
+| `src/assets/images/menu/signature-tandoori.webp` | Flame-Grilled Tandoori Platter | [Reference image](https://flame-and-fork-ru.netlify.app/assets/1-BY_enOvs.jpg) |
+| `src/assets/images/menu/signature-kulcha.webp` | Truffle Mushroom Kulcha | [Reference image](https://flame-and-fork-ru.netlify.app/assets/2-DcIYgmkc.jpg) |
+| `src/assets/images/menu/signature-risotto.webp` | Butter Chicken Risotto | [Reference image](https://flame-and-fork-ru.netlify.app/assets/3-BtNgdatl.jpg) |
+| `src/assets/images/menu/signature-paneer.webp` | Saffron Paneer Steak | [Reference image](https://flame-and-fork-ru.netlify.app/assets/4-Bj9IxFI-.jpg) |
+| `src/assets/images/menu/starter-samosa.webp` | Crispy Samosa Chaat | [Reference image](https://flame-and-fork-ru.netlify.app/assets/5-m1r0IKBC.jpg) |
+| `src/assets/images/menu/starter-chicken65.webp` | Chicken 65 | [Reference image](https://flame-and-fork-ru.netlify.app/assets/6-DsgL50OM.jpg) |
+| `src/assets/images/menu/starter-paneer.webp` | Paneer Tikka | [Reference image](https://flame-and-fork-ru.netlify.app/assets/7-DqQ-LJgL.jpg) |
+| `src/assets/images/menu/starter-fish.webp` | Fish Amritsari | [Reference image](https://flame-and-fork-ru.netlify.app/assets/8-B_XBmwr_.jpg) |
+| `src/assets/images/menu/burger-paneer.webp` | Paneer Tikka Burger | [Reference image](https://flame-and-fork-ru.netlify.app/assets/12-BYGVlF9Q.jpg) |
+| `src/assets/images/menu/pizza-tandoori.webp` | Tandoori Chicken Pizza | [Reference image](https://flame-and-fork-ru.netlify.app/assets/17-rsVbPNdv.jpg) |
+| `src/assets/images/menu/indian-butter-chicken.webp` | Butter Chicken | [Reference image](https://flame-and-fork-ru.netlify.app/assets/21-DrPJtybU.jpg) |
+| `src/assets/images/menu/indian-palak.webp` | Palak Paneer | [Reference image](https://flame-and-fork-ru.netlify.app/assets/22-CSCRwdwN.jpg) |
+| `src/assets/images/menu/indian-dal.webp` | Dal Makhani | [Reference image](https://flame-and-fork-ru.netlify.app/assets/23-8w7y0BEs.jpg) |
+| `src/assets/images/menu/indian-biryani.webp` | Chicken Biryani | [Reference image](https://flame-and-fork-ru.netlify.app/assets/24-B66SY8L0.jpg) |
+| `src/assets/images/menu/asian-noodles.webp` | Szechuan Chicken Noodles | [Reference image](https://flame-and-fork-ru.netlify.app/assets/28-jqJ_W_2r.jpg) |
+| `src/assets/images/menu/asian-manchurian.webp` | Veg Manchurian | [Reference image](https://flame-and-fork-ru.netlify.app/assets/29-BUDcKuFw.jpg) |
+| `src/assets/images/menu/asian-rice.webp` | Thai Basil Chicken Rice | [Reference image](https://flame-and-fork-ru.netlify.app/assets/30-U_ugDOI9.jpg) |
+| `src/assets/images/menu/asian-paneer.webp` | Chilli Paneer | [Reference image](https://flame-and-fork-ru.netlify.app/assets/31-BH3TaGnu.jpg) |
+| `src/assets/images/menu/main-chicken.webp` | Grilled Herb Chicken | [Reference image](https://flame-and-fork-ru.netlify.app/assets/33-BoRc2BrI.jpg) |
+| `src/assets/images/menu/main-ravioli.webp` | Mushroom & Spinach Ravioli | [Reference image](https://flame-and-fork-ru.netlify.app/assets/34-g-aT9kBE.jpg) |
+| `src/assets/images/menu/main-lamb.webp` | Lamb Shank Rogan | [Reference image](https://flame-and-fork-ru.netlify.app/assets/35-CbDVMBjt.jpg) |
+| `src/assets/images/menu/main-paneer.webp` | Paneer Lababdar | [Reference image](https://flame-and-fork-ru.netlify.app/assets/36-CyL4rFIJ.jpg) |
+| `src/assets/images/menu/dessert-jamun.webp` | Gulab Jamun | [Reference image](https://flame-and-fork-ru.netlify.app/assets/39-DUDVwor1.jpg) |
+| `src/assets/images/menu/drink-lassi.webp` | Mango Lassi | [Reference image](https://flame-and-fork-ru.netlify.app/assets/45-BcebrRZB.jpg) |

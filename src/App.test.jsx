@@ -18,7 +18,9 @@ describe('ordering interface', () => {
   it('starts with the full menu and a closed, empty cart with INR prices', async () => {
     const user = userEvent.setup()
     render(<App />)
-    expect(screen.getAllByRole('article')).toHaveLength(12)
+    expect(
+      within(screen.getByRole('list', { name: 'Menu dishes' })).getAllByRole('article'),
+    ).toHaveLength(36)
     expect(screen.queryByRole('dialog')).toBeNull()
     await openCart(user)
     expect(screen.getByText('A little empty in here')).toBeTruthy()
@@ -32,9 +34,15 @@ describe('ordering interface', () => {
     const user = userEvent.setup()
     render(<App />)
     await user.click(addPizza())
-    await user.click(addPizza())
-    await user.click(screen.getByRole('button', { name: 'Drinks', exact: true }))
-    expect(screen.getAllByRole('article')).toHaveLength(3)
+    await user.click(
+      screen.getByRole('button', {
+        name: 'Increase Classic Margherita quantity',
+      }),
+    )
+    await user.click(screen.getByRole('button', { name: 'Beverages', exact: true }))
+    expect(
+      within(screen.getByRole('list', { name: 'Menu dishes' })).getAllByRole('article'),
+    ).toHaveLength(4)
     expect(screen.queryByRole('article', { name: 'Classic Margherita' })).toBeNull()
     await user.click(screen.getByRole('button', { name: 'Add Fresh Lemonade to cart' }))
     await openCart(user)
@@ -44,16 +52,30 @@ describe('ordering interface', () => {
     expect(screen.getByRole('status', { name: 'Cart update' }).textContent).toContain(
       'Fresh Lemonade added',
     )
-    await user.click(screen.getByRole('button', { name: 'Decrease Classic Margherita quantity' }))
+    await user.click(
+      within(cartRegion()).getByRole('button', {
+        name: 'Decrease Classic Margherita quantity',
+      }),
+    )
     expect(total()).toBe('₹328.00')
     expect(
-      screen.getByRole('button', { name: 'Decrease Classic Margherita quantity' }).disabled,
-    ).toBe(true)
-    await user.click(screen.getByRole('button', { name: 'Increase Classic Margherita quantity' }))
+      within(cartRegion()).getByRole('button', {
+        name: 'Decrease Classic Margherita quantity',
+      }).disabled,
+    ).toBe(false)
+    await user.click(
+      within(cartRegion()).getByRole('button', {
+        name: 'Increase Classic Margherita quantity',
+      }),
+    )
     expect(total()).toBe('₹577.00')
     await user.click(screen.getByRole('button', { name: 'Remove Fresh Lemonade from cart' }))
     expect(total()).toBe('₹498.00')
-    await user.click(screen.getByRole('button', { name: 'Remove Classic Margherita from cart' }))
+    await user.click(
+      screen.getByRole('button', {
+        name: 'Remove Classic Margherita from cart',
+      }),
+    )
     expect(total()).toBe('₹0.00')
     expect(screen.getByText('A little empty in here')).toBeTruthy()
     expect(document.activeElement).toBe(screen.getByRole('heading', { name: 'Your cart' }))
@@ -66,7 +88,11 @@ describe('ordering interface', () => {
       await user.click(screen.getByRole('button', { name: `Add ${name} to cart` }))
     }
     await openCart(user)
-    await user.click(screen.getByRole('button', { name: 'Remove Classic Margherita from cart' }))
+    await user.click(
+      screen.getByRole('button', {
+        name: 'Remove Classic Margherita from cart',
+      }),
+    )
     expect(document.activeElement).toBe(
       screen.getByRole('button', { name: 'Remove Pepperoni Please from cart' }),
     )
@@ -81,14 +107,21 @@ describe('ordering interface', () => {
   it('keeps keyboard focus on filters and restores all dishes', async () => {
     const user = userEvent.setup()
     render(<App />)
-    const desserts = screen.getByRole('button', { name: 'Desserts', exact: true })
+    const desserts = screen.getByRole('button', {
+      name: 'Desserts',
+      exact: true,
+    })
     desserts.focus()
     await user.keyboard('{Enter}')
     expect(document.activeElement).toBe(desserts)
     expect(desserts.getAttribute('aria-pressed')).toBe('true')
-    expect(screen.getAllByRole('article')).toHaveLength(3)
+    expect(
+      within(screen.getByRole('list', { name: 'Menu dishes' })).getAllByRole('article'),
+    ).toHaveLength(4)
     await user.click(screen.getByRole('button', { name: 'All dishes' }))
-    expect(screen.getAllByRole('article')).toHaveLength(12)
+    expect(
+      within(screen.getByRole('list', { name: 'Menu dishes' })).getAllByRole('article'),
+    ).toHaveLength(36)
   })
 
   it('provides a working skip link and cart navigation with focus', async () => {
@@ -98,7 +131,9 @@ describe('ordering interface', () => {
     expect(document.activeElement).toBe(screen.getByRole('link', { name: 'Skip to menu' }))
     await user.keyboard('{Enter}')
     expect(document.activeElement).toBe(screen.getByRole('heading', { name: 'What sounds good?' }))
-    const shortcut = screen.getByRole('button', { name: 'View cart, 0 items, ₹0.00' })
+    const shortcut = screen.getByRole('button', {
+      name: 'View cart, 0 items, ₹0.00',
+    })
     await user.click(shortcut)
     expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Close cart' }))
     await user.click(screen.getByRole('button', { name: 'Close cart' }))
@@ -157,13 +192,13 @@ describe('ordering interface', () => {
 })
 
 describe('edge states', () => {
-  it('disables both entry points for increasing an item at the limit', async () => {
+  it('disables menu and cart increases at the limit but still allows decreasing', async () => {
     const user = userEvent.setup()
-    const onAdd = vi.fn()
+    const onAction = vi.fn()
     const onIncrease = vi.fn()
     render(
       <>
-        <FoodCard food={menu[0]} quantity={99} onAdd={onAdd} />
+        <FoodCard food={menu[0]} quantity={99} onAction={onAction} />
         <QuantityControl
           name={menu[0].name}
           quantity={99}
@@ -172,17 +207,23 @@ describe('edge states', () => {
         />
       </>,
     )
-    expect(addPizza().disabled).toBe(true)
-    const increase = screen.getByRole('button', { name: 'Increase Classic Margherita quantity' })
-    expect(increase.disabled).toBe(true)
-    await user.click(addPizza())
-    await user.click(increase)
-    expect(onAdd).not.toHaveBeenCalled()
+    for (const button of screen.getAllByRole('button', {
+      name: 'Increase Classic Margherita quantity',
+    })) {
+      expect(button.disabled).toBe(true)
+      await user.click(button)
+    }
+    expect(onAction).not.toHaveBeenCalled()
     expect(onIncrease).not.toHaveBeenCalled()
+    for (const button of screen.getAllByRole('button', {
+      name: 'Decrease Classic Margherita quantity',
+    })) {
+      expect(button.disabled).toBe(false)
+    }
   })
 
   it('shows a useful no-results state', () => {
-    render(<FoodGrid foods={[]} onAdd={vi.fn()} />)
+    render(<FoodGrid foods={[]} onAction={vi.fn()} />)
     expect(screen.getByText(/No dishes in this category/)).toBeTruthy()
   })
 

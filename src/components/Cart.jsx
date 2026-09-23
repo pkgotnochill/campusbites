@@ -35,7 +35,9 @@ export default function Cart({ items, totalItems, totalMinor, onAction, onBrowse
               key={item.id}
               item={item}
               onIncrease={() => onAction('increase', item.id)}
-              onDecrease={() => onAction('decrease', item.id)}
+              onDecrease={() =>
+                item.quantity === 1 ? removeItem(item, index) : onAction('decrease', item.id)
+              }
               onRemove={() => removeItem(item, index)}
               removeButtonRef={(node) => {
                 if (node) removeButtons.current.set(item.id, node)

@@ -34,11 +34,12 @@ describe('cart behaviour', () => {
     expect(next[1]).toBe(untouched)
   })
 
-  it('decreases to one and requires explicit removal', () => {
+  it('decreases to one then removes the item at zero without mutating the previous cart', () => {
     const two = [{ foodId: pizza, quantity: 2 }]
     const one = act(two, 'decrease')
     expect(one[0].quantity).toBe(1)
-    expect(act(one, 'decrease')).toBe(one)
+    expect(act(one, 'decrease')).toEqual([])
+    expect(one).toEqual([{ foodId: pizza, quantity: 1 }])
     expect(act(one, 'remove')).toEqual([])
   })
 
@@ -66,7 +67,11 @@ describe('cart behaviour', () => {
 
 describe('derived INR totals', () => {
   it('has a zero total and count for an empty cart', () => {
-    expect(getCartSummary([])).toEqual({ items: [], totalItems: 0, totalMinor: 0 })
+    expect(getCartSummary([])).toEqual({
+      items: [],
+      totalItems: 0,
+      totalMinor: 0,
+    })
     expect(formatPrice(0)).toBe('₹0.00')
   })
 
@@ -85,7 +90,10 @@ describe('derived INR totals', () => {
   })
 
   it('preserves fractional rupees exactly before formatting', () => {
-    const catalogue = { a: { id: 'a', priceMinor: 10 }, b: { id: 'b', priceMinor: 20 } }
+    const catalogue = {
+      a: { id: 'a', priceMinor: 10 },
+      b: { id: 'b', priceMinor: 20 },
+    }
     const summary = getCartSummary(
       [
         { foodId: 'a', quantity: 1 },
@@ -99,9 +107,12 @@ describe('derived INR totals', () => {
   })
 
   it('keeps totals finite and exact when every dish is at its limit', () => {
-    const cart = menu.map((food) => ({ foodId: food.id, quantity: MAX_QUANTITY }))
+    const cart = menu.map((food) => ({
+      foodId: food.id,
+      quantity: MAX_QUANTITY,
+    }))
     const summary = getCartSummary(cart)
-    expect(summary.totalItems).toBe(1188)
+    expect(summary.totalItems).toBe(3564)
     expect(summary.totalMinor).toBe(
       menu.reduce((sum, food) => sum + food.priceMinor, 0) * MAX_QUANTITY,
     )
