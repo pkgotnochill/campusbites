@@ -24,7 +24,7 @@ Built with **React + Vite, JavaScript, and plain CSS**. Only React and React DOM
 - All / Veg / Non-veg food preference switch combines with categories and filters Popular Picks without changing the cart.
 - Reusable cards with names, descriptions, local images, INR prices, and vegetarian/non-vegetarian symbols.
 - Four Popular Picks share the same menu records and live cart quantities.
-- Chennai footer with opening hours, counter contact information, and a fictional shop address.
+- Footer with opening hours, counter contact information, and a shop address.
 - Add and change quantities directly on menu cards, Popular Picks, or in the cart drawer.
 - Place a demo order inside the drawer: enter a name and table number, review the INR summary, and confirm to see a reference number and clear the cart.
 - Quantity limits of 1–99; minus at one removes the item and keeps keyboard focus usable.
